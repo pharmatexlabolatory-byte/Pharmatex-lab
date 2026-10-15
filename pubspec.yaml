@@ -1,44 +1,25 @@
-name: Build APK
-on: [push, workflow_dispatch]
+name: warehouse_app
+description: "Warehouse Inventory App"
+publish_to: "none"
+version: 1.0.0+1
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+environment:
+  sdk: ^3.5.0
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  sqflite: ^2.3.0
+  path: ^1.9.0
+  intl: ^0.20.3
+  excel: ^4.0.3
+  pdf: ^3.10.8
+  printing: ^5.12.0
+  file_picker: ^8.0.0
+  share_plus: ^9.0.0
+  path_provider: ^2.1.2
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Setup Project Structure & Permissions
-        run: |
-          mkdir -p temp_project
-          cd temp_project
-          flutter create --org com.pharmatex warehouse_app
-          cp -r warehouse_app/android ../android
-          cd ..
-          rm -rf temp_project
-          # تعديل minSdkVersion إلى 21 لتوافق المكتبات
-          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
-          sed -i 's/minSdkVersion = flutter.minSdkVersion/minSdkVersion = 21/g' android/app/build.gradle || true
-
-      - name: Install Dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release --no-tree-shake-icons
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Warehouse-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+flutter:
+  uses-material-design: true
